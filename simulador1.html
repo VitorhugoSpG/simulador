@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Financeiro</title>
+</head>
+<body>
+    <h2>Simulador Financeiro - Light center</h2>
+    Digite quantos Racks você têm em seu DataCenter: <br><input type="text" id="in_qtdRack"> <br>
+    Quantos computadores possui no seu DataCenter: <input id="comp"> <br><br>
+    Digite qual o tier do seu DataCenter: <br><select name="" id="combo">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select> <br>
+    <br>
+    <button onclick="calc_financa()">Calcular Finanças</button>
+    <div id="div_resultado"></div>
+
+</body>
+
+</html>
+<script>
+    function calc_financa() {
+
+        // Qtd de arduino
+        var qtdRack = Number(in_qtdRack.value);
+
+        var computador = Number(comp.value)
+
+        //6 sensores por arduino, definindo quantos arduinos tem
+        var qtdArduino = computador + (qtdRack * 3);
+
+        //150 reais por arduino (preço do produto)
+        var Arduino = (150 * qtdArduino);
+
+        //Instalação = compra dos arduinos + 100 reais por instalação de arduino
+        var instalacao = Arduino + (qtdArduino * 100);
+
+        // Downtime por ano segundo a tabela em minutos
+        if (combo.value == "1") {
+            var tierPorcentagem = 0.01
+        } else if (combo.value == "2") {
+            var tierPorcentagem = 0.2
+        } else if (combo.value == "3") {
+            var tierPorcentagem = 0.4
+        } else if (combo.value == "4") {
+            var tierPorcentagem = 0.6
+        }
+
+
+        //Preço do projeto mensal
+        var precoProjeto = 20000 + (20000 * tierPorcentagem);
+
+        //Preço Projeto no primeiro mês é o preço da instalação + preco Projeto mensal
+        var precoProjeto1 = instalacao + precoProjeto;
+
+        // Custo de 30 minutos de downtime
+        var paralisacao = 30 * 1200 * 3.54;
+
+        // Custo do downtime por mês (1 por dia)
+        var paralisacaoMes = paralisacao * 29;
+
+        // Custo downtime por ano
+        var paralisacaoAno = paralisacaoMes * 365;
+
+        // Economia no primeiro Mês
+        var economiaMes1 = paralisacaoMes - precoProjeto1;
+
+        // Economia no proximos meses
+        var economiaMes = paralisacaoMes - precoProjeto;
+
+        // Economia por ano
+        var economiaAno = paralisacaoAno - ((precoProjeto * 320) + precoProjeto1);
+
+
+
+        // Frases do orçamento
+        if (qtdRack == 0) {
+            alert("Por favor, insira um valor maior que zero !");
+
+        } else if (qtdRack > 80000) {
+                alert("Por favor, limite a quantidade de Racks até 80000")
+            } else if (computador <= 0) {
+                    alert("Insira uma quanditade de computadores!")
+                } else if (combo.value == "3" || combo.value == "4")  {
+
+                    div_resultado.innerHTML =
+                        `
+                
+                    O quanto você perde: <br>
+                    A cada 30 minutos de paralisação: <b>R$${paralisacao.toFixed(2)}</b>. <br> 
+                    Em um mes (uma paralisação por semana): <b>R$${paralisacaoMes.toFixed(2)}</b> <br>
+                    Em um ano: <b>R$${paralisacaoAno.toFixed(2)}</b>!. <br><br>
+            
+                    Quanto custa nosso projeto: <br>
+                    Primeiro mês (mensal + instalação): <b>R$${precoProjeto1.toFixed(2)}</b> <br>
+                    Próximos meses: <b>R$${precoProjeto.toFixed(2)}</b>!<br><br>
+
+                    O quanto você vai previnir:<br>
+                    Primeiro mês: <b>R$${economiaMes1.toFixed(2)}</b> <br>
+                    Próximos meses: <b>R$${economiaMes.toFixed(2)}</b> <br>
+                    Em um ano: <b>R$${economiaAno.toFixed(2)}</b>! <br> <br>`
+                } else if (combo.value == "1" || combo.value == "2") {
+                    
+                    div_resultado.innerHTML = `
+                    Custo de Instalação: <br>
+                   <b>R$150,00</b> por unidade de arduino + <b>R$100</b> da instalação individual = <br>
+                   <b>R$${instalacao.toFixed(2)},00</b> para instalação.<br><br>
+                
+                
+                    O quanto você perde: <br>
+                    A cada 30 minutos de paralisação: <b>R$${paralisacao.toFixed(2)}</b>. <br> 
+                    Em um mes (uma paralisação por semana): <b>R$${paralisacaoMes.toFixed(2)}</b> <br>
+                    Em um ano: <b>R$${paralisacaoAno.toFixed(2)}</b>!. <br><br>
+                
+
+                    Quanto custa nosso projeto: <br>
+                    Primeiro mês (mensal + instalação): <b>R$${precoProjeto1.toFixed(2)}</b> <br>
+                    Próximos meses: <b>R$${precoProjeto.toFixed(2)}</b>!<br><br>
+                
+                    O quanto você vai previnir:<br>
+                    Primeiro mês: <b>R$${economiaMes1.toFixed(2)}</b> <br>
+                    Próximos meses: <b>R$${economiaMes.toFixed(2)}</b> <br>
+                    Em um ano: <b>R$${economiaAno.toFixed(2)}</b>! <br> <br>`
+
+                }
+}
+</script>
